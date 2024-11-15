@@ -1,4 +1,5 @@
 ﻿using Catalog.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
@@ -11,28 +12,24 @@ namespace Catalog.Persistence.Database.Configuration
         public ProductConfiguration(EntityTypeBuilder<Product> entityBuilder)
         {
             // Configuracion de la tabla
-            entityBuilder.HasIndex(x => x.ProductId);
+            entityBuilder.HasKey(x => x.ProductId);
+
             entityBuilder.Property(x => x.Name).IsRequired().HasMaxLength(100);
             entityBuilder.Property(x => x.Description).IsRequired().HasMaxLength(500);
+            entityBuilder.Property(x => x.Price).HasColumnType("decimal");
 
             // Products by default
             var products = new List<Product>();
             var random = new Random();
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 1; i <= 100; i++)
             {
                 products.Add(new Product
                 {
                     ProductId = i,
                     Name = $"Product {i}",
                     Description = $"Description {i}",
-                    Price = random.Next(100, 1000),
-                    Stock = new ProductInStock
-                    {
-                        ProductInStockId = i,
-                        ProductId = i,
-                        Stock = random.Next(0, 100)
-                    }
+                    Price = random.Next(100, 1000)
                 });
             }
 
